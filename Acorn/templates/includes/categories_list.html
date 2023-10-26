@@ -1,0 +1,18 @@
+{% load inventory %}
+
+<ol>
+    {% for category in categories %}
+        <li>
+            {% get_objects_count category.obj.id as objects_count %}
+            <div class="mb-2 me-auto d-flex justify-content-between align-items-start">
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'demo:products_by_category' category.obj.slug %}">
+                    {{ category.obj.name }}
+                </a>
+                <span class="btn btn-outline-primary btn-sm">{{ objects_count }}</span>
+            </div>
+            {% if category.children %}
+                {% include "includes/categories_list.html" with categories=category.children %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ol>

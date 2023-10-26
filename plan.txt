@@ -1,0 +1,39 @@
+Introduction Phase Suggestions:
+
+Create Data fixtures (if possible community support for multiple languages)
+Setup or custom commands for project initial setup
+Documentation - Class Diagrams and Sequence Diagrams
+Basic/different search techniques
+Product Tags/Search
+Email payment confirmation and PDF receipts
+Product filter searching
+Rating / Feedback
+Coupon System
+
+Intermediate Level Suggestions:
+
+Internationalization
+Change to CBV (or not - up to you)
+PostgreSQL (via Docker)
+Custom admin views and management tasks
+Managing sales or season sales
+Store locator to your project
+Email list + bulk emailing
+Notifications
+Request quotations for bulk orders
+
+Advanced Level Suggestions:
+
+Haystack / Elasticsearch
+User Recommendations/Recommender systems
+Cache
+Live Chat - Help/Support (Channels)
+Processing / working with images (compression etc)
+Generating product statistics
+Allow users to sell products
+
+Deployment Suggestions:
+
+Docker deployment configuration
+Heroku deployment
+Digital Ocean deployment

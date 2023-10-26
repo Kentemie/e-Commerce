@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ product.product.name }}
+{% endblock title %}
+
+{% block content %}
+    <main class="pt-5">
+        <div class="container">
+            {% if messages %}
+                <div class="alert alert-warning" alert-"{{ message.tags }}" role="alert">
+                    {% for message in messages  %}
+                    {{message|safe}} - <a href="{% url "account:wishlist" %}" class="alert-link">Your wishlist</a>.
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="row g-3">
+                <div class="col-md-5 ps-3 col-lg-5 order-md-last p-0 order-1">
+                    <div class="d-grid gap-2">
+                        <div class="d-flex d-flex-inline justify-content-between">
+                            <div>
+                                <span class="h3">£{{ product.store_price }}</span>
+                                <p class="text-muted">includes tax</p>
+                            </div>
+                            <div>
+                                <label for="select">Qty</label>
+                                <select id="select" class="h6" style="width:50px;height:40px;">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="d-flex d-flex-inline justify-content-between">
+                            <p>{{ product.product.description|slice:":355" }}...</p>
+                        </div>
+                        <hr>
+                        <button type="button" id="add-button" value="{{ product.id }}" class="btn btn-success fw500">Add to cart</button>
+                        {% if in_the_wishlist %}
+                            <a role="button" href="{% url 'account:user_wishlist' product.id %}" class="btn btn-light fw500">Remove from wishlist</a>
+                        {% else %}
+                            {% if request.user.is_authenticated %}
+                                <a role="button" href="{% url 'account:user_wishlist' product.id %}" class="btn btn-light fw500">Add to wishlist</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-7 col-lg-7 p-0">
+                    <div class="card mb-3 border-0">
+                        <div class="row g-0">
+                            <div class="col-md-12">
+                                <div class="card-body p-1">
+                                    <h1 class="mb-0 h2 pe-4 pb-4">{{ product.product.name }}</h1>
+                                    <div class="bg-light">
+                                        <img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image" src="{{ product.media_product_inventory.get.img_url.url }}"> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        $(document).on('click', '#add-button', function(event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '{% url "cart:update" %}',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    product_id: $('#add-button').val(),
+                    product_qty: $('#select option:selected').val(),
+                    action: 'add',
+                },
+                success: function(json) {
+                    document.getElementById("cart-qty").innerHTML = json.qty;
+                },
+                error: function(xhr, errmsg, err) {
+
+                },
+            });
+        });
+    </script>
+{% endblock content %}

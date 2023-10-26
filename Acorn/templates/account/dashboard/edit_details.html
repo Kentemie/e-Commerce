@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Edit Profile
+{% endblock %}
+
+{% block content %}
+    <style>
+        .account-form input {
+            border: 2px solid #ccc;
+            height: calc(2em + .75rem + 2px);
+        }
+
+        .account-form input:focus {
+            border-color: #1497ff;
+            box-shadow: none;
+        }
+    </style>
+
+    <div class="container-fluid">
+        <div class="row no-gutter">
+            <div class="col-md-12">
+                <div class="login d-flex align-items-center py-5">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-lg-7  mx-auto">
+
+                                <form class="account-form px-4 pt-4" method="post" enctype="multipart/form-data">
+
+                                    {% if user_form.is_valid %}
+                                        <div class="alert alert-primary" role="alert">
+                                            Details successfully updated!
+                                        </div>
+                                        <p class="small text-center pt-0">
+                                            <a href="{% url "account:dashboard" %}">Back to Dashboard</a>
+                                        </p>
+                                    {% else %}
+                                        <h3 class="pt-4 font-weight-bold text-center">Change your details</h3>
+                                    {% endif %}
+
+                                    {% if form.errors %}
+                                        <div class="alert alert-primary" role="alert">
+                                            Error: Please try again!
+                                        </div>
+                                    {% endif %}
+
+                                    {% csrf_token %}
+                                    <label class="small font-weight-bold">
+                                        {{ user_form.username.label }}
+                                    </label>
+                                    {{ user_form.username }}
+                                    <label class="small font-weight-bold">
+                                        {{ user_form.email.label }}
+                                    </label>
+                                    {{ user_form.email }}
+                                    <label class="small font-weight-bold">
+                                        {{ user_form.first_name.label }}
+                                    </label>
+                                    {{ user_form.first_name }}
+                                    <label class="small font-weight-bold">
+                                        {{ user_form.last_name.label }}
+                                    </label>
+                                    {{ user_form.last_name }}
+
+                                    <button class="btn btn-primary btn-block py-2 mb-4 mt-5 fw-bold w-100" type="submit" value="Save changes">
+                                        Save Changes
+                                    </button>
+                                    <hr class="mb-3">   
+                                </form>
+                                <div class="px-4 pt-4">
+                                    <button type="submit" role="button" class="btn btn-danger btn-block py-2 mb-4 mt-5 fw-bold w-100" data-bs-toggle="modal" data-bs-target="#deleteAccount">
+                                        Delete
+                                    </button>
+                                </div>
+                                <!-- Modal -->
+                                <div class="modal fade" id="deleteAccount" tabindex="-1" aria-labelledby="deleteAccountLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="deleteAccountLabel">Delete account</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form class="account-form px-4" action="{% url 'account:delete_user' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <p>Are you sure you want to delete your account?</p>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

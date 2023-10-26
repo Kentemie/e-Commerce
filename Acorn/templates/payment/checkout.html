@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Payment
+{% endblock %}
+
+{% block content %}
+
+    <style>
+        .account-form input,
+            {
+            border: 2px solid #ccc;
+            height: calc(2em + .75rem + 2px);
+        }
+
+        .form-control {
+            border: 2px solid #ccc;
+        }
+
+        .account-form input:focus {
+            border-color: #1497ff;
+            box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.075), 0 0 0px rgba(255, 0, 0, 0.6);
+        }
+        .container {
+            max-width: 960px;
+        }
+        .form-container {
+            display: none;
+        }
+    </style>
+
+    <main class="py-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-md-5 col-lg-4 order-md-last">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-primary">Your cart</span>
+                    </h4>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">Product name</h6>
+                                <small class="text-body-secondary">Brief description</small>
+                            </div>
+                            <span class="text-body-secondary">$12</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">Second product</h6>
+                                <small class="text-body-secondary">Brief description</small>
+                            </div>
+                            <span class="text-body-secondary">$8</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">Third item</h6>
+                                <small class="text-body-secondary">Brief description</small>
+                            </div>
+                            <span class="text-body-secondary">$5</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between bg-body-tertiary">
+                            <div class="text-success">
+                                <h6 class="my-0">Promo code</h6>
+                                <small>EXAMPLECODE</small>
+                            </div>
+                            <span class="text-success">−$5</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Total (USD)</span>
+                            <strong>$20</strong>
+                        </li>
+                    </ul>
+        
+                    <form class="card p-2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Promo code">
+                            <button type="submit" class="btn btn-secondary">Redeem</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="payment-form" class="col-md-7 col-lg-8">
+                    <h4 class="mb-3">Billing address</h4>
+                    <div id="card-errors" class="a" role="alert">
+
+                    </div>
+                    <form class="needs-validation checkout-form">
+                        {% csrf_token %}
+                        <div class="row g-3">
+
+                            <div class="col-12 user-error-handler">
+                                <!-- User form errors -->
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label for="firstName" class="form-label">
+                                    First name
+                                </label>
+                                {{ user_form.first_name }}
+                            </div>
+            
+                            <div class="col-sm-6">
+                                <label for="lastName" class="form-label">
+                                    Last name
+                                </label>
+                                {{ user_form.last_name }}
+                            </div>
+                
+                            <div class="col-12">
+                                <label for="username" class="form-label">
+                                    Username
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">@</span>
+                                    {{ user_form.username }}
+                                </div>
+                            </div>
+                
+                            <div class="col-12">
+                                <label for="email" class="form-label">
+                                    Email
+                                </label>
+                                {{ user_form.email }}
+                            </div>
+
+                            <div class="col-12 address-error-handler">
+                                 <!-- Address form errors -->
+                            </div>
+                            
+                            <div class="col-12 address-field">
+                                <label for="address" class="form-label">
+                                    Address
+                                </label>
+                                {{ address_form.address_line_1 }}
+                            </div>
+                
+                            <div class="col-12 address-field">
+                                <label for="address2" class="form-label">
+                                    Address 2 <span class="text-body-secondary">(Optional)</span>
+                                </label>
+                                {{ address_form.address_line_2 }}
+                            </div>
+                
+                            <div class="col-md-5 address-field">
+                                <label for="country" class="form-label">
+                                    Country
+                                </label>
+                                {{ address_form.country }}
+                            </div>
+                
+                            <div class="col-md-4 address-field">
+                                <label for="city" class="form-label">
+                                    City
+                                </label>
+                                {{ address_form.city }}
+                            </div>
+                
+                            <div class="col-md-3 address-field">
+                                <label for="zip" class="form-label">
+                                    Zip
+                                </label>
+                                {{ address_form.postal_code }}
+                            </div>
+                            
+                            <div class="col-12 address-field">
+                                <label for="address2" class="form-label">
+                                    Phone number
+                                </label>
+                                {{ address_form.phone_number_1 }}
+                            </div>
+
+                        </div>
+
+                        <!-- ############################ -->
+
+                        <hr class="my-4">
+            
+                        <div class="form-check">
+                            <input type="checkbox" name="shipping_address" class="form-check-input" id="same-address">
+                            <label class="form-check-label" for="same-address">
+                                Shipping address is the same as my billing address
+                            </label>
+                        </div>
+            
+                        <div class="form-check">
+                            <input type="checkbox" name="save_information" class="form-check-input" id="save-info">
+                            <label class="form-check-label" for="save-info">
+                                Save this information for next time
+                            </label>
+                        </div>
+
+                        <!-- ############################ -->
+            
+                        <hr class="my-4">
+
+                        <div id="payment-error" class="alert alert-danger" style="display: none;">
+                            Please select a payment method.
+                        </div>
+
+                        <h4 class="mb-3">Payment</h4>
+                        {% for payment_option in payment_options %}
+                            <div class="my-3">
+                                <div class="form-check">
+                                    <input id="{{ payment_option.name }}" value="{{ payment_option.name }}" name="payment_method" type="radio" class="form-check-input stripe">
+                                    <label class="form-check-label" for="credit">{{ payment_option.get_name_display }}</label>
+                                </div>
+                            </div>
+                        {% endfor %}
+            
+                        <div id="card-element" class="form-control form-control-payment text-body-light form-container">
+                            <!-- Payment elements will appear here -->
+                        </div>
+            
+                        <hr class="my-4">
+            
+                        <button id="submit" class="w-100 btn btn-primary btn-lg submit" type="submit" data-secret="">Continue to checkout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        // <-- Shipping address is the same as my billing address -->
+
+        $('#same-address').on('change', function() {
+            let addressChecked = $(this).prop("checked");
+
+            if (addressChecked) {
+
+                $.ajax({
+                    type: 'GET',
+                    url: '{% url "payment:check_address" %}',
+                    success: function(json) {
+                        if (json.has_billing_address == true) {
+                            $('.account-form').fadeOut('slow').prop('disabled', true);
+                            $('.address-field').fadeOut('slow').prop('disabled', true);
+
+                            $('#same-address').prop("checked", true);
+                        } else {
+                            window.location.href = "{% url 'account:addresses' %}"
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.error(err);
+                    },
+                });
+
+                
+            } else {
+                $('.account-form').fadeIn('slow').prop('disabled', false);
+                $('.address-field').fadeIn('slow').prop('disabled', false);
+
+                $('#same-address').prop("checked", false);
+            }
+        });
+
+        // <-- ### -->
+
+
+        // <-- Save this information for next time -->
+
+        $('#save-info').on('change', function() {
+            let saveInfoChecked = $(this).prop("checked");
+
+            if (saveInfoChecked) {
+                $('#save-info').prop("checked", true);
+            } else {
+                $('#save-info').prop("checked", false);
+            }
+        });
+
+        // <-- ### -->
+
+
+        // <-- Choosing the payment method -->
+
+        let stripeScriptLoaded = false;
+
+        $('input[type=radio][name=payment_method]').on('change', function(event) {
+            event.preventDefault();
+            
+            $('input[type=radio][name=payment_method]').removeAttr('checked');
+            $(this).prop('checked', true);
+
+            if ($('input[type=radio][name=payment_method]:checked').val() === "S") {
+                
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "payment:stripe_payment" %}',
+                    data: {
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                        action: "post",
+                    },
+                    success: function (json) {
+                        $('#submit').attr('data-secret', json.client_secret);
+                        
+                        $('#payment-error').css("display", "none");
+                        
+                        $(".form-container").fadeIn('slow');
+
+                        $.getScript("{% static 'payment/stripe.js' %}");
+
+                        stripeScriptLoaded = true;
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.error(err);
+                    },
+                });
+            } 
+        });
+
+        // <-- ### -->
+
+
+        // <-- Submiting the form -->
+
+        $('.checkout-form').on('submit', function(event) {
+            event.preventDefault();
+
+            if (stripeScriptLoaded === true) {
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "payment:checkout" %}',
+                    data: $(this).serialize(),
+
+                    success: function(json) {
+                        if (json.user_form_errors) {
+                            displayErrors(json.user_form_errors, true);
+
+                        } else if (json.address_form_errors) {
+                            displayErrors(json.user_form_errors);
+
+                        } else {
+                            stripePayment(json);
+                        }
+                    },
+                    error: function(xhr, errmsg, err) {
+                        console.log(JSON.stringify(err));
+                    },
+                })
+            } else {
+                $('#payment-error').fadeIn('slow');
+            }
+
+        });
+
+        // <-- ### -->
+
+        function displayErrors(errors, user_errors=false) {
+            let errorDiv;
+
+            if (user_errors) {
+                errorDiv = $(".user-error-handler");
+            } else {
+                errorDiv = $(".address-error-handler");
+            }
+
+            errorDiv.empty();
+            errorDiv.append("<p>Please correct the following errors:</p>");
+            $.each(errors, function(key, value) {
+                errorDiv.append("<div class='alert alert-danger' role='alert'>" + value + "</div>");
+            });
+        }
+
+    </script>
+
+    <script>
+        // Make csrf token availble in JS files
+        const CSRF_TOKEN = '{{ csrf_token }}';
+    </script>
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+[
+    {
+        "model": "Inventory.producttype",
+        "id": "1",
+        "fields": {
+            "name": "shoes"
+        }
+    }
+]

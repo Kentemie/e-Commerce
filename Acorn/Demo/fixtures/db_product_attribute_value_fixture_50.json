@@ -1,0 +1,34 @@
+[
+    {
+        "model": "Inventory.productattributevalue",
+        "id": "1",
+        "fields": {
+            "product_attribute": "1",
+            "attribute_value": "5"
+        }
+    },
+    {
+        "model": "Inventory.productattributevalue",
+        "id": "2",
+        "fields": {
+            "product_attribute": "1",
+            "attribute_value": "6"
+        }
+    },
+    {
+        "model": "Inventory.productattributevalue",
+        "id": "3",
+        "fields": {
+            "product_attribute": "2",
+            "attribute_value": "red"
+        }
+    },
+    {
+        "model": "Inventory.productattributevalue",
+        "id": "4",
+        "fields": {
+            "product_attribute": "2",
+            "attribute_value": "blue"
+        }
+    }
+]

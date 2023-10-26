@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ Summary }}
+{% endblock title %}
+
+{% block content %}
+    <style>
+        .dropdown-toggle::after {
+            display: none;
+        }
+        .dropdown-menu{
+            top:58px;
+            left:0px;
+            padding:10px;
+        }
+        .container {
+            max-width: 960px;
+        }
+    </style>
+    <main class="pt-5">
+        <div class="container">
+            {% if messages %}
+                <div class="alert alert-warning" alert-{{ message.tags }} role="alert">
+                    {% for message in messages  %}
+                        {{ message|safe }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="col-12">
+                <h1 class="h2">Your cart</h1>
+            </div>
+            <div class="col-12">
+                <p>Manage your <b>items</b> in your cart</p>
+            </div>
+            <hr/>
+        </div>
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-12 p-3 d-flex justify-content-between border border-3 rounded">
+                    <div class="d-flex d-flex-inline">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle text-reset text-decoration-none" href="#" role="button" id="dropdownLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                Shipping options
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownLink">
+                                {% for option in delivery_options %}
+                                    <li class="dropdown-item item small" data-index="{{ option.id }}">
+                                        <a type="button" id="delivery-option" data-index="{{ option.id }}" class="delivery-option text-decoration-none">
+                                            <p class="ps-2 mb-1 pt-1 fw-bold">{{ option.delivery_name }}</p>
+                                            <p class="ps-2">Delivery within {{ option.delivery_timeframe }}</p>
+                                        </a>
+                                    </li>
+                                {% empty %}
+                                    <li class="dropdown-item item small">
+                                        Delivery is currently not available
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div>Sub Total 
+                            <span class="fw-bold">: £</span>
+                            <div id="subtotal" class="d-inline-flex fw-bold">
+                                {{ cart.get_subtotal_price }}
+                            </div>
+                        </div>
+                        <div>
+                            Shipping 
+                            <span class="small" id="delivery-option-name">
+                                
+                            </span>
+                            <span class="fw-bold">: £</span>
+                            <span id="delivery_price" class="fw-bold">{{ cart.get_delivery_price }}</span>
+                        </div>
+                        <hr/>
+                        <div class="pt-2">
+                            Total to pay: 
+                            <span class="fw-bold h5">£</span>
+                            <span id="total" class="fw-bold h5">
+                                {{ cart.get_total_price }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5 col-lg-4 order-md-last p-0 order-3">
+                    <div class="d-grid gap-2 ">
+                        <a role="button" href="{% url 'payment:checkout' %}" class="btn btn-outline-success fw-bold" type="button">Checkout</a>
+                        <button class="btn btn-outline-light" type="button">Save for later</button>
+                    </div>
+                </div>
+                <div class="col-md-7 col-lg-8 p-0">
+                    {% for item in cart %} 
+                        {% with product=item.product %}
+                            <div class="card mb-3 border-0 product-item" data-index="{{ product.id }}">
+                                <div class="row g-0">
+                                    <div class="col-md-2 d-none d-md-block">
+                                        <img class="img-fluid mx-auto d-block" alt="{{ product.media_product_inventory.get.alt_text }}" src="{{ product.media_product_inventory.get.img_url.url }}"/>
+                                    </div>
+                                    <div class="col-md-10 ps-md-3">
+                                        <div class="card-body p-1">
+                                            <a class="text-decoration-none text-reset" href="{% url 'demo:product_detail' product.product.slug %}">
+                                                <p class="card-text pb-3">{{ product.product.name }}</p>
+                                            </a>
+                                            <label for="select">Qty</label>
+                                            <select id="select{{ product.id }}" style="width:50px;height:31px;">
+                                                <option selected disabled hidden>
+                                                    {{ item.quantity }}
+                                                </option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                            <a type="button" id="update-button" data-index="{{ product.id }}" class="update-button text-decoration-none small ps-3">
+                                                Update
+                                            </a>
+                                            <a type="button" id="delete-button" data-index="{{ product.id }}" class="delete-button text-decoration-none small">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endwith %} 
+                    {% endfor %}
+                </div>
+            </div>  
+        </div>
+    </main>
+
+    <script>
+
+        // Select delivery option
+        $(document).on('click', '.delivery-option', function(event) {
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: '{% url "delivery:cart_update_delivery" %}',
+                data: {
+                    delivery_option: $(this).data('index'),
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    action: "post",
+                },
+                success: function (json) {
+                    document.getElementById("total").innerHTML = json.total;
+                    document.getElementById("delivery_price").innerHTML = json.delivery_price;
+                    document.getElementById("delivery-option-name").innerHTML = "(" + json.delivery_name + ")";
+                },
+                error: function (xhr, errmsg, err) {
+                    console.error(err)
+                },
+            });
+            
+        });
+
+        // delete item
+        $(document).on('click', '.delete-button', function(event) {
+            event.preventDefault();
+            const prod_id = $(this).data('index');
+            $.ajax({
+                type: 'POST',
+                url: '{% url "cart:update" %}',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    product_id: prod_id,
+                    action: 'delete',
+                },
+                success: function(json) {
+                    $('.product-item[data-index="'+ prod_id + '"]').remove();
+
+                    let total = 0;
+                    let subtotal = 0;
+                    
+                    if (json.qty !== 0) {
+                        total = json.new_total;
+                        subtotal = json.new_sub_total;
+                    }
+
+                    document.getElementById("subtotal").innerHTML = subtotal;
+                    document.getElementById("total").innerHTML = total;
+                    document.getElementById("cart-qty").innerHTML = json.qty;
+                },
+                error: function(xhr, errmsg, err) {
+                },
+            });
+        });
+
+        // update item
+        $(document).on('click', '.update-button', function(event) {
+            event.preventDefault();
+            const prod_id = $(this).data('index')
+            $.ajax({
+                type: 'POST',
+                url: '{% url "cart:update" %}',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    product_id: prod_id,
+                    product_qty: $('#select' + prod_id + ' option:selected').val(),
+                    action: 'update',
+                },
+                success: function(json) {
+                    document.getElementById("subtotal").innerHTML = json.new_sub_total;
+                    document.getElementById("total").innerHTML = json.new_total;
+                    document.getElementById("cart-qty").innerHTML = json.qty;
+                },
+                error: function(xhr, errmsg, err) {
+                },
+            });
+        });
+
+    </script>
+{% endblock content %}
+
