@@ -52,3 +52,6 @@ Project Acorn's primary goal is to create an inclusive and dynamic marketplace w
 - **Payment Processing:** Stripe API
 
 Project Acorn represents not just a marketplace but a commitment to excellence. Join us on this journey as we redefine online shopping, combining cutting-edge technology, user-centric design, and a vibrant community spirit to create an unparalleled digital marketplace experience.
+
+## Database schema
+![Cute Kitten](Inventory%20Database.png)
